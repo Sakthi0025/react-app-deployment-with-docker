@@ -1,32 +1,24 @@
-pipeline {
+Yaapipeline {
     agent any
 
-    environment {
-        DOCKER_HUB_CREDS = credentials('dockerhub-creds')
-    }
-
     stages {
-        stage('Clone Repo') {
+        stage('Docker Login') {
             steps {
-                git 'https://github.com/sakthi0025/your-repo-name.git' // replace with your actual repo
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build("sakthi0025/myapp:${BUILD_NUMBER}")
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Changing Permission') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
-                        dockerImage.push()
-                    }
-                }
+                sh 'chmod +x build.sh'
+            }
+        }
+
+        stage('Executing Script') {
+            steps {
+                sh './build.sh'
             }
         }
     }
