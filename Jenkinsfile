@@ -1,4 +1,4 @@
-Yaapipeline {
+pipeline {
     agent any
 
     stages {
@@ -10,13 +10,13 @@ Yaapipeline {
             }
         }
 
-        stage('Changing Permission') {
+        stage('Changing the file permission') {
             steps {
                 sh 'chmod +x build.sh'
             }
         }
 
-        stage('Executing Script') {
+        stage('Executing the file') {
             steps {
                 sh './build.sh'
             }
