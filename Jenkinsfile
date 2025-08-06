@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/<your-username>/<your-repo>.git'
+                git 'https://github.com/Sakthi0025/react-app-deployment-with-docker.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("my-app-image")
+                    dockerImage = docker.build("sakthi-image")
                 }
             }
         }
@@ -19,7 +19,11 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    sh "docker run -d -p 8080:80 --name my-running-app my-app-image"
+                    // Stop and remove existing container if already running
+                    sh "docker rm -f sakthi-container || true"
+
+                    // Run the new container
+                    sh "docker run -d -p 80:80 --name sakthi-container sakthi-image"
                 }
             }
         }
