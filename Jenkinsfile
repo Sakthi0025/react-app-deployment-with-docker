@@ -4,26 +4,24 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Sakthi0025/react-app-deployment-with-docker.git'
+                git 'https://github.com/Sakthi0825/react-app-deployment-with-docker.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("sakthi-image")
+                    dockerImage = docker.build("sakthi0825/react-jenkins-app:${BUILD_NUMBER}")
                 }
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Stop and remove existing container if already running
-                    sh "docker rm -f sakthi-container || true"
-
-                    // Run the new container
-                    sh "docker run -d -p 80:80 --name sakthi-container sakthi-image"
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        dockerImage.push()
+                    }
                 }
             }
         }
